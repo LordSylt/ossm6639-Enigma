@@ -3,8 +3,10 @@
     "target": "es6",
     "module": "CommonJS",
     "rootDir": "./src",
+    "outDir": "./dst",
     "strict": true,
     "sourceMap": true,
-    "outDir": "./dst",
+    "removeComments": true,
+    "noEmitOnError": true
   }
 }
