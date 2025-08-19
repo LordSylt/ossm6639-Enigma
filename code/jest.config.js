@@ -3,4 +3,5 @@ module.exports = {
         '^.+\\.ts?$': 'ts-jest'
         },
     //collectCoverage: true,
+    testPathIgnorePatterns: ["/node_modules/", "/dst/"],
 };

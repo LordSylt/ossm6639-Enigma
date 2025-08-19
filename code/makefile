@@ -2,5 +2,9 @@ main:
 	tsc
 	node dst/main.js
 
+test:
+	tsc
+	jest
+
 clean:
-	rm -f dst/*
+	rm -fr dst/*
