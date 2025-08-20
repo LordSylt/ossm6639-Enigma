@@ -1,7 +1,8 @@
 console.log("\x1b[2J\x1b[0;0H"); //Clears terminal window
-export type Plug = [number, number];
-export type PlugBoard = Array<Plug>;
+export type PlugBoard = Array<number>;
 export type NumerisedString = Array<number>;
+type Reflector = Array<number>;
+type Rotor = Array<number>;
 
 const zeroIndex: number = 97;
 
@@ -26,25 +27,19 @@ function stringToNumbers(inputString: string): NumerisedString | null {
     return numberArray;
 }
 
-
-function checkPlug(plugBoard: PlugBoard, inputNumber: number): number {
-    for (let i = 0; i < plugBoard.length; i++) {
-        if (inputNumber == plugBoard[i][0]) {
-            return plugBoard[i][1];
-        } else if (inputNumber == plugBoard[i][1]) {
-            return plugBoard[i][0];
-        }
-    }
-    return inputNumber;
+//Helper func to plugBoardAction, checks if a input is connected in the plugboard
+function checkArray(numberArray: Array<number>, inputNumber: number): number {
+    return numberArray[inputNumber];
 }
 
 
 function plugBoardAction(plugBoard: PlugBoard, input: NumerisedString): NumerisedString {
     let returnString = new Array<number>(input.length);
     for (let i = 0; i < input.length; i++) {
-        returnString[i] = checkPlug(plugBoard, input[i]);
+        returnString[i] = checkArray(plugBoard, input[i]);
     }
     return returnString;
 }
+
 
 module.exports = { stringToNumbers, plugBoardAction };

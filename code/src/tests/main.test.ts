@@ -1,5 +1,3 @@
-import { Plug, PlugBoard } from "../main";
-
 const main = require("../main")
 
 //Unit tests for stringToNumbers
@@ -18,17 +16,24 @@ function testStringToNumbersError() {
 
 
 //Unit tests for plugBoardAction
-let plugBoard = [[0, 1], [2, 3]];
 function testPlugBoardNoPlugs() {
-    expect(main.plugBoardAction([], [0, 1, 2, 3])).toEqual([0, 1, 2, 3]);
+    let plugBoard = new Array<number>();
+    for (let i = 0; i < 26; i++) {
+        plugBoard[i] = i;
+    } 
+    expect(main.plugBoardAction(plugBoard, [0, 1, 2, 3])).toEqual([0, 1, 2, 3]);
 }
 
 function testPlugBoardPlugs() {
+    let plugBoard: Array<number> = [1, 0, 3, 2];
+    for (let i = 4; i < 26; i++) {
+        plugBoard[i] = i;
+    } 
     expect(main.plugBoardAction(plugBoard, [0, 1, 2, 3, 4])).toEqual([1, 0, 3, 2, 4]);
 }
 
 
-
+//Running tests
 test("Converts a string into its letters corresponding zero-indexed numbers", testStringToNumbers);
 test("Converts a Capitalized string into its letters corresponding zero-indexed numbers", testStringToNumbersCapital);
 test("Tests a negative output from stringToNumbers", testStringToNumbersError);

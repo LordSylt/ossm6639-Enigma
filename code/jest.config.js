@@ -1,7 +1,8 @@
-module.exports = {
-    transform: {
-        '^.+\\.ts?$': 'ts-jest'
-        },
-    //collectCoverage: true,
-    testPathIgnorePatterns: ["/node_modules/", "/dst/"],
-};
+export default {
+  transform: {
+    '^.+\\.ts$': 'ts-jest'
+  },
+  testEnvironment: 'node',
+  testPathIgnorePatterns: ['/node_modules/', '/dst/'],
+  // collectCoverage: true,
+}
