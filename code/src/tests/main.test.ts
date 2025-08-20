@@ -2,15 +2,26 @@ const main = require("../main")
 
 //Unit tests for stringToNumbers
 function testStringToNumbers() {
-    expect(main.stringToNumbers("abcdef")).toEqual([0, 1, 2, 3, 4, 5]);
+    let testString: string = "abcdef"
+    let numerisedOutput: Array<number> = new Array<number>();
+    for (let i = 0; i < testString.length; i++) {
+        numerisedOutput[i] = main.stringToNumber(testString[i])
+    }
+    expect(numerisedOutput).toEqual([0, 1, 2, 3, 4, 5]);
 }
 
 function testStringToNumbersCapital() {
-    expect(main.stringToNumbers("aBcDef")).toEqual([0, 1, 2, 3, 4, 5]);
+    let testString: string = "aBcDef"
+    let numerisedOutput: Array<number> = new Array<number>();
+    for (let i = 0; i < testString.length; i++) {
+        numerisedOutput[i] = main.stringToNumber(testString[i])
+    }
+    expect(numerisedOutput).toEqual([0, 1, 2, 3, 4, 5]);
 }
 
 function testStringToNumbersError() {
-    expect(main.stringToNumbers("abcde1")).toBe(null);
+    let testString: string = "1"
+    expect(main.stringToNumber(testString)).toBe(null);
 }
 
 
@@ -21,7 +32,12 @@ function testPlugBoardNoPlugs() {
     for (let i = 0; i < 26; i++) {
         plugBoard[i] = i;
     } 
-    expect(main.plugBoardAction(plugBoard, [0, 1, 2, 3])).toEqual([0, 1, 2, 3]);
+    let numerisedString: Array<number> = [0, 1, 2, 3];
+    let plugBoardOutput: Array<number> = new Array<number>();
+    for (let i = 0; i < numerisedString.length; i++) {
+        plugBoardOutput[i] = main.plugBoardAction(plugBoard, numerisedString[i])
+    }
+    expect(plugBoardOutput).toEqual([0, 1, 2, 3]);
 }
 
 function testPlugBoardPlugs() {
@@ -29,8 +45,30 @@ function testPlugBoardPlugs() {
     for (let i = 4; i < 26; i++) {
         plugBoard[i] = i;
     } 
-    expect(main.plugBoardAction(plugBoard, [0, 1, 2, 3, 4])).toEqual([1, 0, 3, 2, 4]);
+    let numerisedString: Array<number> = [0, 1, 2, 3, 4];
+    let plugBoardOutput: Array<number> = new Array<number>();
+    for (let i = 0; i < numerisedString.length; i++) {
+        plugBoardOutput[i] = main.plugBoardAction(plugBoard, numerisedString[i])
+    }
+    expect(plugBoardOutput).toEqual([1, 0, 3, 2, 4]);
 }
+
+
+function testRotorReflectorSymmetry() {
+    let numerisedString: Array<number> = [0, 1, 2, 3];
+    let rotorOutput: Array<number> = new Array<number>();
+    let rotorHouse1 = main.rotorHouseInit();
+    let rotorHouse2 = main.rotorHouseInit();
+    for (let i = 0; i < numerisedString.length; i++) {
+        rotorOutput[i] = main.rotorReflectorAction(rotorHouse1, numerisedString[i]);
+    }
+    expect(rotorOutput).not.toEqual(numerisedString);
+    for (let i = 0; i < numerisedString.length; i++) {
+        rotorOutput[i] = main.rotorReflectorAction(rotorHouse2, rotorOutput[i]);
+    }
+    expect(rotorOutput).toEqual(numerisedString);
+}
+
 
 
 //Running tests
@@ -39,3 +77,4 @@ test("Converts a Capitalized string into its letters corresponding zero-indexed 
 test("Tests a negative output from stringToNumbers", testStringToNumbersError);
 test("Tests the plugboard with an empty plugboard", testPlugBoardNoPlugs);
 test("Tests the plugboard with an non-empty plugboard", testPlugBoardPlugs);
+test("Test to see if rotor and reflector actions are symmetrical", testRotorReflectorSymmetry);
