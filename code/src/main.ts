@@ -1,4 +1,7 @@
 //console.log("\x1b[2J\x1b[0;0H"); //Clears terminal window
+import { asyncWrapProviders } from "async_hooks";
+import * as readline from "readline"
+
 export type PlugBoard = Array<number>;
 export type NumerisedString = Array<number>;
 export type RotorHouse = Array<Rotor>;
@@ -13,6 +16,7 @@ const rotor3: RotorInternal = [8, 22, 3, 19, 1, 11, 24, 0, 16, 7, 25, 14, 2, 18,
 
 //An array where the numbers are swapped in pairs meaning reflector[i] == y && reflector[y] == i
 const reflector: Reflector = [17, 9, 5, 14, 23, 2, 24, 19, 21, 1, 15, 13, 22, 11, 3, 10, 18, 0, 16, 7, 25, 8, 12, 4, 6, 20];
+const tempPlug: PlugBoard = [0, 9, 2, 3, 23, 5, 24, 19, 21, 1, 15, 13, 22, 11, 14, 10, 18, 17, 16, 7, 25, 8, 12, 4, 6, 20];
 
 
 const zeroIndex: number = 97;
@@ -30,6 +34,10 @@ function stringToNumber(inputChar: string): number | null {
     }
         
     return lowerCaseInput.charCodeAt(0) - zeroIndex; // Returns the zero indexed numerised char
+}
+
+function numberToString(input: number): string {
+    return String.fromCharCode(input + zeroIndex); // Returns the zero indexed numerised char
 }
 
 function mappingAction(map: Array<number>, input: number): number {
@@ -98,6 +106,35 @@ function rotorReflectorAction(rotorHouse: RotorHouse, input: number): number {
     return rotorReflectorRouting(rotorHouse, input);
 }
 
+
+
+function enigmaMain() {
+    let rotorHouse: RotorHouse = rotorHouseInit();
+    const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout,
+    });
+    rl.question("Enter message\n", (answer) => { 
+        console.log("Processing...");
+        let answerNoSpaces = answer.replace(/\s+/g, "");
+        let enigmaOutput: number | null;
+        for (let i = 0; i < answerNoSpaces.length; i ++) {
+            enigmaOutput = stringToNumber(answerNoSpaces[i]);
+            if (enigmaOutput == null) {
+               process.stdout.write(answerNoSpaces[i]);
+               continue; 
+            }
+            enigmaOutput = plugBoardAction(tempPlug, enigmaOutput);
+            enigmaOutput = rotorReflectorAction(rotorHouse, enigmaOutput);
+            enigmaOutput = plugBoardAction(tempPlug, enigmaOutput);
+            process.stdout.write(numberToString(enigmaOutput));
+        }
+        console.log("");
+        rl.close();
+    });
+}
+
+enigmaMain();
 
 
 
