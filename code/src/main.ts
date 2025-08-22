@@ -303,7 +303,9 @@ async function enigmaMainMenu(rotorHouse: RotorHouse, plugBoard: PlugBoard, rl: 
                 await machineStatus(rotorHouse, plugBoard, rl);
                 break;
             case '5':
+
                 rl.close();
+                console.clear();
                 process.exit(0);
             default:
                 process.exit(420);
