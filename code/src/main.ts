@@ -22,8 +22,8 @@ const zeroIndex: number = 97;
 
 /**
  * Converts input to an array of each individual characters corresponding number (0-25)
- * @param inputString The string that should be converted
- * @returns Array of converted characters and null if failed (triggered by non letters being input)
+ * @param inputString The string that should be converted (a-z)
+ * @returns a number (0-25) and null if failed (triggered by non letters being input)
  */
 function stringToNumber(inputChar: string): number | null {
     let lowerCaseInput: string = inputChar.toLowerCase();
@@ -36,10 +36,22 @@ function stringToNumber(inputChar: string): number | null {
     return lowerCaseInput.charCodeAt(0) - zeroIndex; // Returns the zero indexed numerised char
 }
 
+/**
+ * Converts a number 0-25 to a letter a-z
+ * @param input number, 0-25
+ * @returns letter a-z
+ */
 function numberToString(input: number): string {
     return String.fromCharCode(input + zeroIndex); // Returns the zero indexed numerised char
 }
 
+
+/**
+ * the function mapping a input to its value by using said input as an index
+ * @param map any array with numbers
+ * @param input a value to use as an index in the map
+ * @returns the value of map[input]
+ */
 function mappingAction(map: Array<number>, input: number): number {
     return map[input];
 }
@@ -49,14 +61,32 @@ function plugBoardAction(plugBoard: PlugBoard, input: number): number {
     return mappingAction(plugBoard, input);
 }
 
+/**
+ * Routes through reflector by using the input as an index and returning the value at said index
+ * @param reflector the reflector
+ * @param input a number to encrypt
+ * @returns the value at the index "input" from the rotor
+ */
 function reflectorAction(reflector: Reflector, input: number): number {
     return mappingAction(reflector, input);
 }
 
+/**
+ * Routes through rotor by using the input as an index and returning the value at said index
+ * @param rotor a single rotor in the rotor house
+ * @param input a number to encrypt
+ * @returns the value at the index "input" from the rotor
+ */
 function rotorActionForward(rotor: Rotor, input: number): number {
     return mappingAction(rotor[1], input);
 }
 
+/**
+ * Routes through rotor backwards instead of forward eg, finding the index of a value
+ * @param rotor a single rotor in the rotor house
+ * @param input a number to encrypt
+ * @returns the index of the input in the rotor
+ */
 function rotorActionBackward(rotor: Rotor, input: number): number {
     return rotor[1].indexOf(input);
 }
@@ -72,6 +102,11 @@ function plugBoardInit(): PlugBoard {
     return basePlug;
 }
 
+/**
+ * Displays the current plugboard configuration to the user
+ * @param plugBoard to display
+ * @returns the string visualisation of the plugboard
+ */
 function displayPlugBoard(plugBoard: PlugBoard): string {
     let donePairs: Array<number> = new Array<number>;
     let unboundLetters: string = "Available letters:\n";
@@ -97,13 +132,19 @@ function displayRotors(rotorHouse: RotorHouse): string {
     return displayedRotors;
 }
 
-//Helper func for rotorAction
+//Helper func to rotate rotor a certain amount of steps
 function rotateRotor(rotor: Rotor, steps: number) {
     rotor[0] = Math.abs(((rotor[0] + steps) % 26));
     rotor[1] = rotor[1].slice(steps % 26).concat(rotor[1].slice(0, steps % 26));
 }
 
-//Routes the input through the 3 rotors, into the reflector then in reverse order back through said reflectors
+
+/**
+ * Routes the input through the 3 rotors, into the reflector then in reverse order back through said rotors
+ * @param rotorHouse all rotors and rotations for the current session
+ * @param input a single letter of the message converted to a number
+ * @returns the new number after being pushed through rotors and reflector
+ */
 function rotorReflectorRouting(rotorHouse: RotorHouse, input: number): number {
     let routeOutput: number = input;
     //First pass through rotor house
@@ -122,7 +163,13 @@ function rotorReflectorRouting(rotorHouse: RotorHouse, input: number): number {
     return routeOutput;
 }
 
-//Rotates the rotors to their corresponding place and calls the routing function
+
+/**
+ * Rotates the rotors to their corresponding place and calls the routing function
+ * @param rotorHouse all rotors and rotations for the current session
+ * @param input a single letter of the message converted to a number
+ * @returns the encrypted number after passing through rotors and reflector
+ */
 function rotorReflectorAction(rotorHouse: RotorHouse, input: number): number {
     rotateRotor(rotorHouse[0], 1);
     if (rotorHouse[0][0] != 0) {
@@ -141,14 +188,21 @@ function sleep(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function enigmaMessageHandler(answer: string, rotorHouse: RotorHouse, plugBoard: PlugBoard, rl: readline.Interface) {
+/**
+ * Runs encryption/decryption for all characters individually and prints them one by one
+ * @param message The message to encrypt/decrypt
+ * @param rotorHouse all rotors and rotations for the current session
+ * @param plugBoard c
+ * @param rl not used yet, planned addition
+ */
+async function enigmaMessageHandler(message: string, rotorHouse: RotorHouse, plugBoard: PlugBoard, rl: readline.Interface) {
     //Regex in this line generated by LLM
-    let answerNoSpaces = answer.replace(/\s+/g, "");
+    let messageNoSpaces = message.replace(/\s+/g, "");
     let enigmaOutput: number | null;
-    for (let i = 0; i < answerNoSpaces.length; i++) {
-        enigmaOutput = stringToNumber(answerNoSpaces[i]);
+    for (let i = 0; i < messageNoSpaces.length; i++) {
+        enigmaOutput = stringToNumber(messageNoSpaces[i]);
         if (enigmaOutput == null) {
-            process.stdout.write(answerNoSpaces[i]);
+            process.stdout.write(messageNoSpaces[i]);
             continue;
         }
         enigmaOutput = plugBoardAction(plugBoard, enigmaOutput);
@@ -160,18 +214,36 @@ async function enigmaMessageHandler(answer: string, rotorHouse: RotorHouse, plug
     }
 }
 
+
+/**
+ * An asynchronous question way of getting terminal input
+ * @param rl the interface to read/write from terminal
+ * @param query A question to ask
+ * @returns a promise of the user input in respone to query
+ */
 function questionAsync(rl: readline.Interface, query: string): Promise<string> {
     return new Promise((resolve) => {
         rl.question(query, resolve);
     });
 }
 
+
+/**
+ * Clears the line above the cursor in terminal, found on stackOverflow
+ */
 function clearAboveLine() {
     //Found these 2 lines on stackoverflow 
     readline.moveCursor(process.stdout, 0, -1); 
     readline.clearLine(process.stdout, 0); 
 }
 
+
+/**
+ * a function to read a line from the terminal until the answer is contained in options
+ * @param options an array of acceptable inputs to wait for
+ * @param rl the interface to read/write from terminal
+ * @returns a promise of the answer
+ */
 async function waitForMenuKeypress(options: Array<string>, rl: readline.Interface): Promise<string> {
     return new Promise(async (resolve) => {
         while (true) {
@@ -186,7 +258,11 @@ async function waitForMenuKeypress(options: Array<string>, rl: readline.Interfac
     });
 }
 
-
+/**
+ * Asks user which plugs should be used in the plugboard
+ * @param plugBoard to be configured
+ * @param rl the interface to write and read from terminal
+ */
 async function configurePlugBoard(plugBoard: PlugBoard, rl: readline.Interface) {
     while (true) {
         try {
@@ -207,7 +283,7 @@ async function configurePlugBoard(plugBoard: PlugBoard, rl: readline.Interface) 
         }
     }
 
-    //helper func for configurePlugBoard
+    //helper func for parsing and changing plugs in the plugboard
     function parseAndApply(answer: string) {
         //Regex generated by LLM
         const plugPairs: Array<string> = answer.split(/\s+/);
