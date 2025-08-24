@@ -3,11 +3,11 @@ import * as readline from "readline";
 import { encryptUI, enigmaMainMenuUI, rotorConfigUI } from "./enigmaUI";
 
 export type PlugBoard = Array<number>;
-export type NumerisedString = Array<number>;
 export type RotorHouse = Array<Rotor>;
+export type Rotor = [number, RotorInternal];
 type Reflector = Array<number>;
 type RotorInternal = Array<number>;
-type Rotor = [number, RotorInternal];
+
 //Premade arrays for the machine
 const rotor1: RotorInternal = [12, 3, 21, 0, 8, 25, 5, 19, 1, 14, 24, 7, 17, 23, 6, 20, 13, 2, 11, 4, 22, 10, 18, 15, 9, 16];
 const rotor2: RotorInternal = [4, 16, 1, 23, 12, 9, 0, 18, 7, 25, 14, 3, 21, 10, 6, 20, 11, 2, 24, 15, 19, 5, 22, 13, 17, 8];
@@ -19,7 +19,7 @@ const basePlug: PlugBoard = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
 
 
 const zeroIndex: number = 97;
-
+//MARKER
 /**
  * Converts input to an array of each individual characters corresponding number (0-25)
  * @param inputString The string that should be converted (a-z)
@@ -132,6 +132,7 @@ function displayRotors(rotorHouse: RotorHouse): string {
     return displayedRotors;
 }
 
+//MARKER
 //Helper func to rotate rotor a certain amount of steps
 function rotateRotor(rotor: Rotor, steps: number) {
     rotor[0] = Math.abs(((rotor[0] + steps) % 26));
@@ -237,7 +238,7 @@ function clearAboveLine() {
     readline.clearLine(process.stdout, 0); 
 }
 
-
+//MARKER
 /**
  * a function to read a line from the terminal until the answer is contained in options
  * @param options an array of acceptable inputs to wait for
